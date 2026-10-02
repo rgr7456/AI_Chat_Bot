@@ -1,0 +1,113 @@
+# =========================
+# Python
+# =========================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# =========================
+# Virtual Environment
+# =========================
+venv/
+.venv/
+env/
+ENV/
+
+# =========================
+# Environment / Secrets
+# =========================
+.env
+.env.*
+!.env.example
+
+# =========================
+# IDE / Editor
+# =========================
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# =========================
+# Face Recognition / Images
+# =========================
+staff_images/
+uploads/
+faces/
+known_faces/
+generated_images/
+*.jpg
+*.jpeg
+*.png
+*.webp
+
+# If you have sample images you WANT to commit,
+# remove the image rules above and use:
+# staff_images/*
+# !staff_images/.gitkeep
+
+# =========================
+# Machine Learning / Models
+# =========================
+models/
+*.h5
+*.keras
+*.onnx
+*.pb
+*.tflite
+*.weights
+*.ckpt
+
+# =========================
+# Logs / Debug Output
+# =========================
+*.log
+debug_output.txt
+*.out
+
+# =========================
+# Testing / Coverage
+# =========================
+.pytest_cache/
+.coverage
+htmlcov/
+.coverage.*
+.tox/
+.nox/
+
+# =========================
+# Build / Distribution
+# =========================
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# =========================
+# Database
+# =========================
+*.db
+*.sqlite
+*.sqlite3
+
+# =========================
+# Alembic
+# =========================
+# Keep migration files!
+# Do NOT ignore alembic/versions/
+
+# =========================
+# OS Files
+# =========================
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# =========================
+# Temporary Files
+# =========================
+*.tmp
+*.temp
+*.bak
+*.swp

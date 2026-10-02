@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Face Recognition API CORS Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 3px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 3px;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        .success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .form-group {
+            margin: 10px 0;
+        }
+        input, select {
+            margin: 5px;
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Face Recognition API CORS Test</h1>
+    
+    <div class="test-section">
+        <h3>API Base URL Configuration</h3>
+        <div class="form-group">
+            <label>API URL: </label>
+            <input type="text" id="apiUrl" value="http://127.0.0.1:8000" style="width: 300px;">
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h3>1. Basic CORS Test</h3>
+        <p>Test if CORS is working with a simple GET request</p>
+        <button onclick="testCors()">Test CORS</button>
+        <div id="corsResult" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>2. API Endpoints Test</h3>
+        <p>Test various API endpoints</p>
+        <button onclick="testRoot()">Test Root (/)</button>
+        <button onclick="testCorsEndpoint()">Test CORS Endpoint</button>
+        <button onclick="testCollections()">Test Collections</button>
+        <button onclick="testStaffList()">Test Staff List</button>
+        <div id="apiResult" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>3. File Upload Test (Register)</h3>
+        <p>Test file upload with CORS</p>
+        <div class="form-group">
+            <label>Staff ID: </label>
+            <input type="text" id="staffId" value="test001">
+        </div>
+        <div class="form-group">
+            <label>Staff Name: </label>
+            <input type="text" id="staffName" value="Test User">
+        </div>
+        <div class="form-group">
+            <label>Image File: </label>
+            <input type="file" id="imageFile" accept="image/*">
+        </div>
+        <button onclick="testRegister()">Test Register</button>
+        <div id="registerResult" class="result"></div>
+    </div>
+
+    <script>
+        function getApiUrl() {
+            return document.getElementById('apiUrl').value;
+        }
+
+        function showResult(elementId, message, isSuccess = true) {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.className = isSuccess ? 'result success' : 'result error';
+        }
+
+        async function testCors() {
+            try {
+                showResult('corsResult', 'Testing CORS...', true);
+                
+                const response = await fetch(`${getApiUrl()}/cors-test`);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    showResult('corsResult', `✅ CORS Working!\nStatus: ${response.status}\nResponse: ${JSON.stringify(data, null, 2)}`, true);
+                } else {
+                    showResult('corsResult', `❌ HTTP Error ${response.status}: ${response.statusText}`, false);
+                }
+            } catch (error) {
+                if (error.message.includes('CORS')) {
+                    showResult('corsResult', `❌ CORS Error: ${error.message}\n\nSolution: Make sure CORS middleware is added to FastAPI`, false);
+                } else {
+                    showResult('corsResult', `❌ Network Error: ${error.message}\n\nCheck if API server is running`, false);
+                }
+            }
+        }
+
+        async function testRoot() {
+            try {
+                const response = await fetch(`${getApiUrl()}/`);
+                const data = await response.json();
+                showResult('apiResult', `GET /: ${response.status}\n${JSON.stringify(data, null, 2)}`, response.ok);
+            } catch (error) {
+                showResult('apiResult', `❌ Error: ${error.message}`, false);
+            }
+        }
+
+        async function testCorsEndpoint() {
+            try {
+                const response = await fetch(`${getApiUrl()}/cors-test`);
+                const data = await response.json();
+                showResult('apiResult', `GET /cors-test: ${response.status}\n${JSON.stringify(data, null, 2)}`, response.ok);
+            } catch (error) {
+                showResult('apiResult', `❌ Error: ${error.message}`, false);
+            }
+        }
+
+        async function testCollections() {
+            try {
+                const response = await fetch(`${getApiUrl()}/face/milvus/collections`);
+                const data = await response.json();
+                showResult('apiResult', `GET /face/milvus/collections: ${response.status}\n${JSON.stringify(data, null, 2)}`, response.ok);
+            } catch (error) {
+                showResult('apiResult', `❌ Error: ${error.message}`, false);
+            }
+        }
+
+        async function testStaffList() {
+            try {
+                const response = await fetch(`${getApiUrl()}/face/milvus/staff_list`);
+                const data = await response.json();
+                showResult('apiResult', `GET /face/milvus/staff_list: ${response.status}\n${JSON.stringify(data, null, 2)}`, response.ok);
+            } catch (error) {
+                showResult('apiResult', `❌ Error: ${error.message}`, false);
+            }
+        }
+
+        async function testRegister() {
+            try {
+                const staffId = document.getElementById('staffId').value;
+                const staffName = document.getElementById('staffName').value;
+                const fileInput = document.getElementById('imageFile');
+                
+                if (!staffId || !staffName) {
+                    showResult('registerResult', '❌ Please enter staff ID and name', false);
+                    return;
+                }
+                
+                if (!fileInput.files[0]) {
+                    showResult('registerResult', '❌ Please select an image file', false);
+                    return;
+                }
+                
+                showResult('registerResult', 'Uploading...', true);
+                
+                const formData = new FormData();
+                formData.append('staff_id', staffId);
+                formData.append('staff_name', staffName);
+                formData.append('image', fileInput.files[0]);
+                
+                const response = await fetch(`${getApiUrl()}/face/register`, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                showResult('registerResult', `POST /face/register: ${response.status}\n${JSON.stringify(data, null, 2)}`, response.ok);
+                
+            } catch (error) {
+                showResult('registerResult', `❌ Error: ${error.message}`, false);
+            }
+        }
+
+        // Test CORS on page load
+        window.onload = function() {
+            setTimeout(testCors, 1000);
+        };
+    </script>
+</body>
+</html>
