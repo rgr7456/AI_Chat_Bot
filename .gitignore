@@ -59,6 +59,8 @@ models/*
 *.tflite
 *.weights
 *.ckpt
+# ship the small ONNX runtime models in the repo (needed by the Docker build)
+!models/*.onnx
 
 # =========================
 # Logs / Debug Output

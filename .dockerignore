@@ -1,0 +1,21 @@
+# keep the build context (and image) small
+venv/
+.venv/
+.git/
+.gitignore
+__pycache__/
+*.pyc
+.env
+.env.*
+!.env.example
+staff_images/
+tools/
+scripts/
+tests/
+*.md
+!README.md
+*.pdf
+*.pptx
+.DS_Store
+.idea/
+.vscode/

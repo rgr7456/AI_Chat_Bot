@@ -1,0 +1,33 @@
+# Render blueprint for the HRMS face + OCR backend.
+# Create the service from this file: Render -> New -> Blueprint -> pick the repo.
+services:
+  - type: web
+    name: hrms-face-service
+    runtime: docker
+    # free = 512MB RAM (may OOM with OpenCV+ONNX+OCR); starter ($7) is safer.
+    plan: starter
+    region: oregon
+    healthCheckPath: /face/health
+    # run DB migrations before each deploy goes live
+    preDeployCommand: alembic upgrade head
+    envVars:
+      # --- set these in the Render dashboard (sync:false = not stored in git) ---
+      - key: PG_DSN                 # Supabase/Postgres connection string
+        sync: false
+      - key: CORS_ORIGINS           # e.g. https://your-app.vercel.app
+        sync: false
+      - key: JWT_SECRET             # must match the HRMS auth service
+        sync: false
+      # --- safe defaults (edit as needed) ---
+      - key: AUTH_ENABLED
+        value: "true"
+      - key: OCR_ENABLED
+        value: "true"
+      - key: OCR_AADHAAR_MASK
+        value: "true"
+      - key: FACE_MATCH_COSINE
+        value: "0.38"
+      - key: LIVENESS_TURN_THRESHOLD
+        value: "0.16"
+      - key: LIVENESS_PASSIVE_ENFORCE
+        value: "false"
