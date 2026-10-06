@@ -1,4 +1,11 @@
 # =========================
+# Node (not used by this Python service; guard against stray npm installs)
+# =========================
+node_modules/
+package.json
+package-lock.json
+
+# =========================
 # Python
 # =========================
 __pycache__/

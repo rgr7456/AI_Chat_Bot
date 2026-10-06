@@ -15,9 +15,26 @@ import logging
 from dataclasses import dataclass, field
 from typing import List, Optional, Tuple
 
+import cv2
 import numpy as np
 
 log = logging.getLogger("face.ocr")
+
+# Cap the longest edge before OCR. Full-res phone photos of ID cards (3-4k px)
+# make the detection model allocate huge buffers and can OOM a small instance;
+# 1600px keeps IDs/PAN/Aadhaar text crisp while bounding memory and latency.
+_MAX_OCR_SIDE = 1600
+
+
+def _downscale_for_ocr(image: np.ndarray, max_side: int = _MAX_OCR_SIDE) -> np.ndarray:
+    h, w = image.shape[:2]
+    longest = max(h, w)
+    if longest <= max_side:
+        return image
+    scale = max_side / float(longest)
+    return cv2.resize(
+        image, (int(round(w * scale)), int(round(h * scale))), interpolation=cv2.INTER_AREA
+    )
 
 
 @dataclass
@@ -61,6 +78,7 @@ class OcrEngine:
 
     def read(self, image: np.ndarray) -> OcrResult:
         """Run OCR on a BGR OpenCV image and return detected lines."""
+        image = _downscale_for_ocr(image)
         raw, _elapse = self._engine(
             image, use_cls=self.use_angle_cls, text_score=self.text_score
         )
