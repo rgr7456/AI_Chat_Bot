@@ -50,7 +50,8 @@ generated_images/
 # =========================
 # Machine Learning / Models
 # =========================
-models/
+models/*
+!models/README.md
 *.h5
 *.keras
 *.onnx
